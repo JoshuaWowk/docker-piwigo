@@ -1,0 +1,45 @@
+---
+services:
+
+  piwigo:
+    image: lscr.io/linuxserver/piwigo:latest
+    container_name: piwigo
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - /portainer/Files/AppData/Config/piwigo/config:/config
+      - /portainer/Files/AppData/Config/piwigo/gallery:/gallery
+    ports:
+      - 808:80
+    restart: unless-stopped
+
+
+  mariadb:
+    image: lscr.io/linuxserver/mariadb:latest
+    container_name: mariadb
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - MYSQL_ROOT_PASSWORD=${mysql_root_password}
+      - MYSQL_DATABASE=${mysql_database_name} #optional
+      - MYSQL_USER=${mysql_user} #optional
+      - MYSQL_PASSWORD=${mysql_user_password} #optional
+      # - REMOTE_SQL=http://URL1/your.sql,https://URL2/your.sql #optional
+    volumes:
+      - /portainer/Files/AppData/Config/piwigo/mariadb/config:/config
+    network_mode: bridge
+    ports:
+      - 809:3306
+    restart: unless-stopped
+
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - 810:8080
